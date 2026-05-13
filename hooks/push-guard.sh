@@ -21,7 +21,7 @@ if ! printf '%s' "$command" | grep -qE '(^|&&|;|\|\|?)\s*(git\s+push|jj\s+git\s+
   exit 0
 fi
 
-HINT_FILE="${CLAUDE_PLUGIN_ROOT}/hooks/push-migration-hint.md"
+HINT_FILE="$(cd "$(dirname "$0")" && pwd)/push-migration-hint.md"
 
 cat >&2 <<EOF
 BLOCK: \`git push\` / \`jj git push\` は直接実行できません。
