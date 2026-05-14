@@ -1,13 +1,8 @@
 /// claude-push-guard Taskfile (pkfire).
 ///
-/// kawaz/* 標準: VCS 抽象 / 翻訳ペア / migrate / semver gate は
+/// kawaz/* 標準: VCS 抽象 / 翻訳ペア / migrate は
 /// [kawaz/pkf-tasks](https://github.com/kawaz/pkf-tasks) 由来。本ファイルは
 /// shell + JSON manifest だけのプラグインなので、lint/test/push に絞った構造。
-///
-/// **初回 push の例外**: `checkVersionBumped` は `compareRefCmd = "echo main@origin"`
-/// で main@origin と比較する。初回 push 時は main@origin が無いため deps に
-/// 含めていない。GitHub に push し main@origin が確立した後、別 change で
-/// push deps に追加する（docs/issue/ に TODO あり）。
 amends "package://pkg.pkl-lang.org/github.com/mizchi/pkfire/pkfire@0.7.0#/Taskfile.pkl"
 
 import "package://pkg.pkl-lang.org/github.com/kawaz/pkf-tasks/pkf-tasks@2.2.2#/all.pkl" as kawaz
@@ -127,14 +122,17 @@ local ci: Task = new {
 
 // ---------- gates ----------
 
-// 初回 push 後に push deps へ追加する (docs/issue/ にフォローアップ起票済)
-local checkVersionBumped: Task =
-  (kawaz.semver.checkBumped) {
-    compareRefCmd = "echo main@origin"
-    triggerPaths = List("hooks/", ".claude-plugin/")
-    versionFiles = List(".claude-plugin/plugin.json")
-    taskName = "semver:check-version-bumped"
-  }.check
+local checkVersionBumped: Task = new {
+  name = "semver:check-version-bumped"
+  description = "plugin.json / marketplace.json の version が origin/main より進んでいることを検査"
+  cache = false
+  cmd =
+    """
+    set -euo pipefail
+    bump-semver compare gt .claude-plugin/plugin.json vcs:origin/main
+    bump-semver compare gt .claude-plugin/marketplace.json vcs:origin/main
+    """
+}
 
 // ---------- release flow ----------
 
@@ -170,7 +168,7 @@ local push: Task = (kawaz.vcs.push) {
   deps {
     ci
     kawaz.docs.checkTranslations
-    // checkVersionBumped       // 初回 push 後に有効化 (docs/issue/ 参照)
+    checkVersionBumped
     kawaz.migrate.checkPkfTasks
     // kawaz.migrate.checkPkfire  // pkfire 0.10.0 への migrate が破壊的 (DR 必要、docs/issue/ 参照)
   }
