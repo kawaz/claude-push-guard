@@ -1,7 +1,13 @@
 {
   "name": "push-guard",
-  "owner": { "name": "kawaz" },
-  "metadata": { "description": "Block direct git/jj push and route through repo task runner (pkf run push / just push)", "version": "0.1.0", "license": "MIT" },
+  "owner": {
+    "name": "kawaz"
+  },
+  "metadata": {
+    "description": "Block direct git/jj push and route through repo task runner (pkf run push / just push)",
+    "version": "0.1.1",
+    "license": "MIT"
+  },
   "plugins": [
     {
       "name": "push-guard",

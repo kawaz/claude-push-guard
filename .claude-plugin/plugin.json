@@ -1,7 +1,7 @@
 {
   "name": "push-guard",
   "description": "Block direct `git push` / `jj git push` and steer Claude Code toward `pkf run push` (or `just push`) so repo-defined checks/tests/version gates run.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": { "name": "kawaz" },
   "license": "MIT",
   "repository": "https://github.com/kawaz/claude-push-guard"
