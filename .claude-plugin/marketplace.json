@@ -4,14 +4,14 @@
     "name": "kawaz"
   },
   "metadata": {
-    "description": "Block direct git/jj push and route through repo task runner (pkf run push / just push)",
-    "version": "0.1.1",
+    "description": "Block direct git/jj push and route through repo task runner (just push)",
+    "version": "0.2.0",
     "license": "MIT"
   },
   "plugins": [
     {
       "name": "push-guard",
-      "description": "PreToolUse(Bash) hook that blocks `git push` / `jj git push` so Claude must go through repo-defined `pkf run push` (or `just push`) — keeps check/test/version-bump/translation gates from being bypassed.",
+      "description": "PreToolUse(Bash) hook that blocks `git push` / `jj git push` so Claude must go through repo-defined `just push` — keeps check/test/version-bump/translation gates from being bypassed.",
       "source": "./"
     }
   ]

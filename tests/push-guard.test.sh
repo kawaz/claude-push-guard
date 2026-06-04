@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # claude-push-guard の push-guard.sh をドライランで検証。
-# 9 ケース (block 5 + pass 4) を JSON で食わせ、exit code と
-# stderr/stdout を確認する。
+# JSON で食わせ、exit code を確認する (block 5 + pass 4 + edge 3)。
 
 set -uo pipefail
 
@@ -39,7 +38,7 @@ assert_case "git push --tags"                2 '{"tool_input":{"command":"git pu
 
 # ---- pass (exit=0) ----
 assert_case "just push"                      0 '{"tool_input":{"command":"just push"}}'
-assert_case "pkf run push"                   0 '{"tool_input":{"command":"pkf run push"}}'
+assert_case "just push-without-bump"         0 '{"tool_input":{"command":"just push-without-bump"}}'
 assert_case "commit message contains git push" 0 '{"tool_input":{"command":"jj describe -m \"docs: how to git push\""}}'
 assert_case "gh pr create"                   0 '{"tool_input":{"command":"gh pr create"}}'
 

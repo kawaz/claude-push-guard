@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.0 (2026-06-05)
+
+- chore!: task runner を `Taskfile.pkl` (pkfire / pkf-tasks) から `justfile` に
+  戻す。kawaz/* canonical (`personal-docs-structure` skill 準拠) が justfile
+  単独運用へ集約されたのに追従
+- guard message と `push-migration-hint.md` から `pkf run push` の言及を撤去、
+  推奨は `just push` の 1 経路に整理
+- README / README-ja も同方針で書き換え
+- tests: pass case を `just push` / `just push-without-bump` に更新
+
 ## 0.1.1 (2026-05-14)
 
 - fix: `${CLAUDE_PLUGIN_ROOT}` 依存を撤廃し、`HINT_FILE` を `$0` 起点で解決

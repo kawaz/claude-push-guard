@@ -1,6 +1,6 @@
 #!/bin/bash
 # PreToolUse(Bash) hook: git push / jj git push を直接実行させず、
-# `pkf run push` 経由でのリリースワークフローに誘導する。
+# `just push` 経由でのリリースワークフローに誘導する。
 #
 # Claude Code は Bash ツールの `command` 引数をそのまま `bash -c` に流す。
 # `git push` / `jj git push` を直接打たれると、リポ側で定義した check / test /
@@ -27,18 +27,17 @@ cat >&2 <<EOF
 BLOCK: \`git push\` / \`jj git push\` は直接実行できません。
 
 リポ側で定義した check / test / version bump gate / 翻訳ペア検証等を
-すっ飛ばさないために、以下のいずれかを使ってください:
+すっ飛ばさないために、以下を使ってください:
 
-  pkf run push          # Taskfile.pkl が定義されたリポ (推奨)
-  just push             # 旧来の justfile を持つリポ
+  just push
 
-リポに pkf (Taskfile.pkl) が未整備で、justfile / Makefile / package.json scripts
-等で push 周りをこねている場合は、kawaz/pkf-tasks への移行を検討してください。
-移行方針と canonical テンプレ (kawaz/bump-semver) の解説は以下を参照:
+リポに justfile が未整備で Makefile / package.json scripts 等で push 周りを
+こねている場合は、kawaz/bump-semver の justfile を canonical テンプレとして
+移植してください。詳細は:
 
   ${HINT_FILE}
 
 このフックは PreToolUse(Bash) で exit 2 ブロック。停止後に同じ change を
-別経路で再開する場合は、上記のいずれかのタスクランナー経由で push してください。
+別経路で再開する場合は、必ず \`just push\` 経由で push してください。
 EOF
 exit 2
