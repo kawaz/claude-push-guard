@@ -23,13 +23,14 @@ default:
 
 # ---------- main entries (利用者が直接叩く) ----------
 
-# push (全 gate 通過後に push。bump-trigger に diff が無ければ version gate は自動 skip)
+# push (全 gate 通過後に push してローカルも更新。bump-trigger に diff が無ければ version gate は自動 skip)
 push: ensure-clean ci check-translations check-version-bumped
     bump-semver vcs push --branch main --jj-bookmark-auto-advance
-    @echo "[hint] CI 無しのリポなので push 即リリース。'just on-success-release' で local plugin cache を更新"
+    @just _local-plugin-reload
 
-# push 済みリリースを local plugin cache に反映 (CI 無しなので push 直後に実行可)
-on-success-release:
+# push 成功直後の local 反映 (CI 無しリポの canonical: push task に embed して仕組みで強制)
+[private]
+_local-plugin-reload:
     claude plugin marketplace update push-guard
     claude plugin update push-guard@push-guard
     @echo "[hint] /reload-plugins to apply without restart"

@@ -41,8 +41,8 @@ claude plugin update push-guard@push-guard
 ```
 
 更新は cache 反映まで。実行中セッションに効かせるには `/reload-plugins`
-（または restart）。`just push` した本人の環境では `just on-success-release`
-recipe が上記 2 コマンドをまとめて実行する。
+（または restart）。`just push` した本人の環境では push recipe が上記 2 コマンドを
+自動実行する（`_local-plugin-reload`、CI 無しリポなので push に inline）。
 
 ## 検出と挙動
 

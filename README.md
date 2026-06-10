@@ -42,8 +42,8 @@ claude plugin update push-guard@push-guard
 ```
 
 This refreshes the cache; run `/reload-plugins` (or restart) to apply it to a
-running session. On the machine you `just push` from, the `just on-success-release`
-recipe runs both commands for you.
+running session. On the machine you `just push` from, the push recipe runs both
+commands automatically (`_local-plugin-reload`, inlined since this repo has no CI).
 
 ## Behavior
 
