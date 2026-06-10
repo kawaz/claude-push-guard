@@ -9,9 +9,10 @@
   (claude-plugin-reference hooks.md §9.0)。block 時のエラーヘッダが展開前の command
   リテラルを出すため、どの plugin が block したか識別できるようにする (shell-form の
   `#` 以降コメントで実行に無影響)
-- chore: push 後の local 反映を `on-success-release` 別 recipe + ヒントから
-  `_local-plugin-reload` の push inline に変更。CI 無しリポの canonical (claude-plugin-reference
-  と同形) に揃え、push 一発で plugin cache 更新まで「仕組みで強制」する
+- chore: push 後の local 反映を「ヒント表示」から `on-success-release` recipe の
+  直接呼び出しに変更。push 一発で marketplace + plugin update まで「仕組みで強制」する。
+  recipe 名は全 plugin リポ共通の慣習 `on-success-release` に統一 (CI 無し=push から直接 /
+  CI あり=watch-workflow 経由、と発火方法だけが異なる)
 
 ## 0.3.0 (2026-06-10)
 
