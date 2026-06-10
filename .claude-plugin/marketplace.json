@@ -5,8 +5,7 @@
   },
   "metadata": {
     "description": "Block direct git/jj push and route through repo task runner (just push)",
-    "version": "0.2.0",
-    "license": "MIT"
+    "version": "0.3.0"
   },
   "plugins": [
     {

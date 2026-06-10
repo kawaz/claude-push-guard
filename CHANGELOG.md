@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.3.0 (2026-06-10)
+
+- chore: 同梱の `hooks/push-migration-hint.md` を撤去。guard message は
+  `just push` への誘導と `personal-docs-structure` skill / canonical の
+  kawaz/bump-semver justfile への参照のみに簡素化 (移行ガイドの二重メンテを解消)
+- docs: README / README-ja に「kawaz 個人ワークフロー専用プラグイン」である旨を明記
+- chore: justfile を docs-structure 準拠に是正
+  - `push-without-bump` recipe を削除 (bump-trigger に diff が無ければ version gate は
+    自動 skip されるので不要。invariant のバイパス口を塞ぐ)
+  - just 変数 (`version-files` / `bump-trigger-paths`) を撤廃し positional 引数渡しに
+    (`set positional-arguments` 追加、`set lazy` 撤去)
+  - bump-trigger を `hooks/` のみに絞る (test 専用変更で version bump を要求しない =
+    canonical kawaz/bump-semver と同方針)
+  - `lint-version-sync` と `check-versions` の重複を 1 本化
+- tests: `just push-without-bump` の pass case を削除
+- chore: marketplace.json の不要な `metadata.license` を撤去 (Claude Code が無視する
+  未知フィールドで `claude plugin validate` が warning を出していた)
+
 ## 0.2.0 (2026-06-05)
 
 - chore!: task runner を `Taskfile.pkl` (pkfire / pkf-tasks) から `justfile` に

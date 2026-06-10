@@ -10,18 +10,10 @@
 
 set unstable
 set guards
-set lazy
+set positional-arguments
 set shell := ["bash", "-eu", "-o", "pipefail", "-c"]
 
 set script-interpreter := ["bash", "-eu", "-o", "pipefail"]
-
-# bump-version トリガとなる product code パス (docs/ や *.md は除外)。
-
-bump-trigger-paths := "hooks/ tests/"
-
-# bump 対象の version ファイル群 (claude-plugin 固有: 2 ファイルの version 一致は bump-semver が保証)
-
-version-files := ".claude-plugin/plugin.json .claude-plugin/marketplace.json"
 
 # ---------- default ----------
 
@@ -31,19 +23,15 @@ default:
 
 # ---------- main entries (利用者が直接叩く) ----------
 
-# push (バージョン bump 済みを前提、全 gate 通過後に push)
-push: ensure-clean ci check-translations check-versions check-version-bumped
-    bump-semver vcs push --branch main --jj-bookmark-auto-advance
-
-# push (ドキュメント更新等のみで bump 不要な場合)
-push-without-bump: ensure-clean ci check-translations check-versions
+# push (全 gate 通過後に push。bump-trigger に diff が無ければ version gate は自動 skip)
+push: ensure-clean ci check-translations check-version-bumped
     bump-semver vcs push --branch main --jj-bookmark-auto-advance
 
 # version を bump して Release commit を作成 (push は別途 `just push`)
 [script]
-bump-version bump="patch": ensure-clean
-    new_version=$(bump-semver {{ bump }} {{ version-files }} --write --no-hint)
-    bump-semver vcs commit -m "Release v${new_version}" {{ version-files }}
+bump-version level="patch": ensure-clean
+    new_version=$(bump-semver "$1" .claude-plugin/plugin.json .claude-plugin/marketplace.json --write --no-hint)
+    bump-semver vcs commit -m "Release v${new_version}" .claude-plugin/plugin.json .claude-plugin/marketplace.json
 
 # CI 単一エントリ (lint + test + validate を依存重複排除で 1 回ずつ保証)
 ci: lint test validate
@@ -51,7 +39,7 @@ ci: lint test validate
 # ---------- dev recipes (push/ci の依存、利用者が直接叩くこともある) ----------
 
 # lint: justfile フォーマット + shell 構文 + JSON validity + version 一致
-lint: lint-just lint-shell lint-json lint-version-sync
+lint: lint-just lint-shell lint-json check-versions
 
 # justfile フォーマット確認
 [private]
@@ -68,11 +56,6 @@ lint-shell:
 lint-json:
     for f in .claude-plugin/*.json hooks/*.json; do [ -f "$f" ] || continue; jq . "$f" > /dev/null; done
 
-# plugin.json と marketplace.json の version 一致を保証 (bump-semver 内部の整合チェック)
-[private]
-lint-version-sync:
-    @bump-semver get {{ version-files }} --no-hint > /dev/null
-
 # Claude Plugin の構造検証 (marketplace 自己宣言含む)
 validate: lint
     claude plugin validate .
@@ -83,7 +66,7 @@ test: lint
 
 # 現在の version を表示 (2 ファイルの一致確認も兼ねる)
 version:
-    @bump-semver get {{ version-files }} --no-hint
+    @bump-semver get .claude-plugin/plugin.json .claude-plugin/marketplace.json --no-hint
 
 # ---------- gates (push の内部、利用者が直接叩くことほぼなし) ----------
 
@@ -91,10 +74,10 @@ version:
 ensure-clean: lint
     bump-semver vcs is clean
 
-# version files 整合チェック (bump-semver get の副作用で一致検証)
+# version files 整合チェック (bump-semver get の副作用で 2 ファイルの version 一致検証)
 [private]
 check-versions:
-    @bump-semver get {{ version-files }} --no-hint > /dev/null
+    @bump-semver get .claude-plugin/plugin.json .claude-plugin/marketplace.json --no-hint > /dev/null
 
 # 翻訳ペア (README.md ↔ README-ja.md) の鮮度: en の最終 commit timestamp >= ja
 [private]
@@ -112,17 +95,21 @@ _check-translation-headers name:
     head -5 {{ name }}-ja.md | grep -qF "> [English](./{{ file_name(name) }}.md) | 日本語"
     head -5 {{ name }}.md    | grep -qF "> English | [日本語](./{{ file_name(name) }}-ja.md)"
 
-# product code に変更があれば version も main@origin より bump 済か検証 (変更なしならスキップ)
+# product code (hooks/) 変更時に version bump 済か検証 (変更なしならスキップ)
+check-version-bumped: (_check-version-bumped "hooks/")
+
+# trigger paths の diff があれば version が main@origin より上がっているか検証。
+# trigger は hooks/ のみ (test 専用変更では bump を要求しない = canonical kawaz/bump-semver と同方針)
 [private]
 [script]
-check-version-bumped:
+_check-version-bumped *target_paths:
     rc=0
-    bump-semver vcs diff -q main@origin -- {{ bump-trigger-paths }} || rc=$?
+    bump-semver vcs diff -q main@origin -- "$@" || rc=$?
     case "$rc" in
       0) exit 0 ;;
       1) ;;
       *) echo "ERROR: bump-semver vcs diff failed (rc=$rc). main@origin が track されていない可能性。先に 'jj git fetch' を試してください" >&2; exit 1 ;;
     esac
     bump-semver compare gt .claude-plugin/plugin.json vcs:main@origin:.claude-plugin/plugin.json --no-hint && exit 0
-    echo 'ERROR: bump-trigger-paths が変わってるが version 未 bump。"just bump-version" を実行してください' >&2
+    echo 'ERROR: hooks/ が変わってるが version 未 bump。"just bump-version" を実行してください' >&2
     exit 1

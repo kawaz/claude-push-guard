@@ -6,6 +6,11 @@ Claude Code プラグイン: `git push` / `jj git push` を Bash ツールから
 直接実行させず、リポ定義のタスクランナー (`just push`) 経由でのみ push を
 許可する `PreToolUse(Bash)` フック。
 
+> **これは kawaz 個人のワークフロー専用プラグインです。** push の受け口を
+> `just push` に固定し、kawaz/* リポの `personal-docs-structure` 規約
+> (justfile + `bump-semver vcs` サブコマンド) を前提にしています。
+> 万人向けの汎用プラグインではありません。
+
 ## なぜ必要か
 
 kawaz/* のリポは push 直前に check / test / 翻訳ペア検証 / version bump gate
@@ -37,9 +42,9 @@ claude plugin install push-guard@push-guard
 | `gh pr create` / `gh release create` 等 push を含まない git/gh コマンド | pass |
 | コミットメッセージや heredoc 内の文字列リテラルに含まれる `git push` | pass (誤検知しない) |
 
-ブロック時は stderr に **(1) 推奨コマンド** (`just push`) と **(2) リポに
-justfile が未整備な場合の移行ガイドへの絶対パス**
-(`${CLAUDE_PLUGIN_ROOT}/hooks/push-migration-hint.md`) を返す。
+ブロック時は stderr に **(1) 推奨コマンド** (`just push`) と **(2) justfile が
+未整備な場合の参照先** (`personal-docs-structure` skill の「task runner
+(justfile)」節、または canonical の kawaz/bump-semver の justfile) を返す。
 
 ## 何故 `just push` を推奨するか
 
@@ -53,7 +58,8 @@ kawaz/* では `justfile` + `bump-semver vcs` サブコマンドを canonical �
 - `check-version-bumped` で `bump-trigger-paths` 配下の変更時の version bump 忘れ検出
 - `ensure-clean` で working tree の clean 検証
 
-が回る。詳細と移行ガイドは同梱の `hooks/push-migration-hint.md` を参照。
+が回る。justfile の書き方は `personal-docs-structure` skill の「task runner
+(justfile)」節、または canonical の kawaz/bump-semver の justfile を参照。
 
 ## 「気をつける」では駄目な理由
 

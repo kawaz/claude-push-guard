@@ -7,6 +7,11 @@ Claude Code plugin: a `PreToolUse(Bash)` hook that blocks Claude from running
 runner (`just push`) so check / test / translation-pair / version-bump gates
 actually fire.
 
+> **This is a personal-workflow plugin for kawaz.** It pins the push
+> entrypoint to `just push` and assumes the kawaz/* `personal-docs-structure`
+> convention (justfile + `bump-semver vcs` subcommands). It is not a
+> general-purpose plugin for everyone.
+
 ## Why
 
 In kawaz/* repos the `push` recipe in `justfile` chains a list of gates
@@ -39,9 +44,9 @@ before every Bash command.
 | `git push` appearing inside a commit-message string or heredoc | pass (no false positive) |
 
 On block, the hook writes to stderr (1) the recommended command (`just push`)
-and (2) an absolute path to the bundled migration guide
-(`${CLAUDE_PLUGIN_ROOT}/hooks/push-migration-hint.md`) for repos that don't
-yet have a `justfile`.
+and (2) where to learn the `justfile` layout if a repo doesn't have one yet
+(the `personal-docs-structure` skill, or the canonical kawaz/bump-semver
+justfile).
 
 ## Why `just push`
 
@@ -55,8 +60,8 @@ to:
 - `check-version-bumped` — bump-forgotten detection on `bump-trigger-paths`
 - `ensure-clean` — working-tree clean check
 
-Migration patterns for repos that don't yet have a `justfile` (Makefile,
-package.json scripts, bin/release.sh, etc.) are in `hooks/push-migration-hint.md`.
+The `justfile` layout is documented in the `personal-docs-structure` skill and
+the canonical kawaz/bump-semver justfile.
 
 ## Why mechanical block over "be careful"
 
