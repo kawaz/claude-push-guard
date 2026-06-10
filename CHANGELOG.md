@@ -17,6 +17,10 @@
 - tests: `just push-without-bump` の pass case を削除
 - chore: marketplace.json の不要な `metadata.license` を撤去 (Claude Code が無視する
   未知フィールドで `claude plugin validate` が warning を出していた)
+- chore: justfile に `on-success-release` recipe を追加 (canonical claude-gh-monitor 準拠)。
+  push 後に `claude plugin marketplace update` + `claude plugin update` で local plugin
+  cache を新 version に反映するループを閉じる。CI 無しリポなので push recipe から直接
+  ヒントで誘導 (gh-monitor のような workflow watch は不要)
 
 ## 0.2.0 (2026-06-05)
 

@@ -26,6 +26,13 @@ default:
 # push (全 gate 通過後に push。bump-trigger に diff が無ければ version gate は自動 skip)
 push: ensure-clean ci check-translations check-version-bumped
     bump-semver vcs push --branch main --jj-bookmark-auto-advance
+    @echo "[hint] CI 無しのリポなので push 即リリース。'just on-success-release' で local plugin cache を更新"
+
+# push 済みリリースを local plugin cache に反映 (CI 無しなので push 直後に実行可)
+on-success-release:
+    claude plugin marketplace update push-guard
+    claude plugin update push-guard@push-guard
+    @echo "[hint] /reload-plugins to apply without restart"
 
 # version を bump して Release commit を作成 (push は別途 `just push`)
 [script]
