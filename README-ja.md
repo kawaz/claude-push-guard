@@ -33,6 +33,17 @@ claude plugin install push-guard@push-guard
 `PreToolUse(Bash)` フックが登録され、Claude Code の Bash tool 実行ごとに
 `hooks/push-guard.sh` を経由する。
 
+## アップデート
+
+```bash
+claude plugin marketplace update push-guard
+claude plugin update push-guard@push-guard
+```
+
+更新は cache 反映まで。実行中セッションに効かせるには `/reload-plugins`
+（または restart）。`just push` した本人の環境では `just on-success-release`
+recipe が上記 2 コマンドをまとめて実行する。
+
 ## 検出と挙動
 
 | パターン | 挙動 |

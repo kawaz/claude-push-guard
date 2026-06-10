@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.1 (2026-06-10)
+
+- docs: README{,-ja} に「アップデート」節を追加 (`claude plugin marketplace update`
+  + `claude plugin update` + `/reload-plugins`)。claude-plugin-reference の
+  distribution.md「README に install/update 手順を記載」規定に準拠
+- chore: hooks.json の command 末尾に plugin 識別子マーカー `#push-guard` を付与
+  (claude-plugin-reference hooks.md §9.0)。block 時のエラーヘッダが展開前の command
+  リテラルを出すため、どの plugin が block したか識別できるようにする (shell-form の
+  `#` 以降コメントで実行に無影響)
+
 ## 0.3.0 (2026-06-10)
 
 - chore: 同梱の `hooks/push-migration-hint.md` を撤去。guard message は

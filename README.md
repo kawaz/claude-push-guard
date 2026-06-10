@@ -34,6 +34,17 @@ claude plugin install push-guard@push-guard
 This registers a `PreToolUse(Bash)` hook that runs `hooks/push-guard.sh`
 before every Bash command.
 
+## Update
+
+```bash
+claude plugin marketplace update push-guard
+claude plugin update push-guard@push-guard
+```
+
+This refreshes the cache; run `/reload-plugins` (or restart) to apply it to a
+running session. On the machine you `just push` from, the `just on-success-release`
+recipe runs both commands for you.
+
 ## Behavior
 
 | Pattern | Result |
