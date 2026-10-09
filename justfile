@@ -38,7 +38,7 @@ on-success-release:
 [script]
 bump-version level="patch": ensure-clean
     new_version=$(bump-semver "$1" .claude-plugin/plugin.json .claude-plugin/marketplace.json --write --no-hint)
-    bump-semver vcs commit -m "Release v${new_version}" .claude-plugin/plugin.json .claude-plugin/marketplace.json
+    bump-semver vcs commit --allow-nonexistent-path -m "Release v${new_version}" .claude-plugin/plugin.json .claude-plugin/marketplace.json
 
 # CI 単一エントリ (lint + test + validate を依存重複排除で 1 回ずつ保証)
 ci: lint test validate

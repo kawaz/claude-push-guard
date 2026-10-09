@@ -24,16 +24,10 @@ fi
 cat >&2 <<'EOF'
 BLOCK: `git push` / `jj git push` は直接実行できません。
 
-リポ側で定義した check / test / version bump gate / 翻訳ペア検証等を
-すっ飛ばさないために、以下を使ってください:
+リポ側で定義した事前チェックをスキップしないために、以下を使ってください:
 
   just push
 
-justfile が未整備な場合の書き方は personal-docs-structure skill の
-「task runner (justfile)」節、または canonical 実装の kawaz/bump-semver の
-justfile を参照してください。
-
-このフックは PreToolUse(Bash) で exit 2 ブロック。停止後に同じ change を
-別経路で再開する場合は、必ず `just push` 経由で push してください。
+justfile が未整備な場合の書き方は personal-docs-structure skill の「task runner (justfile)」節を参照してください。
 EOF
 exit 2
